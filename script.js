@@ -1,284 +1,43 @@
-// Mobile menu toggle
-const hamburger = document.querySelector('.hamburger');
-const navMenu = document.querySelector('.nav-menu');
-
-if (hamburger) {
-    hamburger.addEventListener('click', () => {
-        navMenu.style.display =
-            navMenu.style.display === 'flex' ? 'none' : 'flex';
-    });
+// TEENUP interactive features
+const learningContent={
+ coding:{icon:'💻',title:'Coding & Web Development',intro:'Start building digital skills with small, practical lessons.',lessons:[['HTML Basics','HTML gives a webpage its structure: headings, paragraphs, links, images and buttons.'],['CSS Basics','CSS controls appearance: colors, spacing, fonts, cards and responsive layouts.'],['JavaScript Basics','JavaScript makes pages interactive with variables, functions, conditions and events.'],['Mini Challenge','Build a personal webpage with your name, three interests and a button that shows a welcome message.']],tip:'Learn by building. After each lesson, change something in your own project and test it.'},
+ agriculture:{icon:'🌾',title:'Agriculture & Agribusiness',intro:'Discover practical farming, sustainability and business skills.',lessons:[['Know Your Crop','Learn a crop’s climate needs, soil requirements, planting method, growth stages and harvest period.'],['Farm Planning','List land, seed, labour, water, tools and expected harvest before starting production.'],['Sustainable Farming','Protect soil and water with practices such as mulching, crop rotation, composting and responsible water use.'],['Agribusiness Thinking','Consider customers, production costs, pricing, quality and how products reach the market.']],tip:'Start with a small garden or school project and keep simple records of costs, activities and results.'},
+ entrepreneurship:{icon:'💼',title:'Entrepreneurship',intro:'Turn useful ideas into small, responsible projects.',lessons:[['Find a Problem','Look for a real problem people around you experience. Useful business ideas often begin with solutions.'],['Know Your Customer','Ask who needs the solution, what they currently do and what would make your solution useful.'],['Plan the Numbers','Separate startup costs, running costs, expected sales and profit.'],['Test Before Scaling','Start small, collect feedback, improve the idea and expand only when the model works.']],tip:'Use a notebook: problem, customer, solution, cost, price and next step.'},
+ creativity:{icon:'🎨',title:'Creativity & Digital Media',intro:'Build skills for design, storytelling and digital content.',lessons:[['Choose Your Medium','Explore writing, photography, illustration, video, music or design.'],['Tell a Story','Give your content a clear message, audience and logical beginning, middle and end.'],['Practice Design','Use readable text, good spacing, consistent colors and simple layouts.'],['Build a Portfolio','Save your best projects and describe what you learned from each one.']],tip:'Create consistently. A small project every week can become a strong portfolio.'},
+ communication:{icon:'🗣️',title:'Communication & Leadership',intro:'Learn to express ideas clearly and work effectively with others.',lessons:[['Speak Clearly','Know your main point before speaking. Use simple language and useful examples.'],['Listen Well','Pay attention, avoid interrupting and ask questions when something is unclear.'],['Work in Teams','Agree on roles, deadlines and responsibilities and communicate early when there is a problem.'],['Lead by Example','Leadership includes reliability, respect, accountability and helping others succeed.']],tip:'Practice explaining something you know to a friend in one minute without reading.'},
+ analytics:{icon:'📊',title:'Data & Analytics',intro:'Learn how to turn information into useful decisions.',lessons:[['Collect Good Data','Decide what you need to know and record information consistently.'],['Organize Information','Tables and categories make patterns easier to see.'],['Compare Results','Look for differences, trends and unusual values before drawing conclusions.'],['Explain the Finding','Ask: what happened, what might explain it and what should happen next?']],tip:'Start with everyday data such as study hours, farm yields or quiz scores and make a simple table.'}}
+function openLearningHub(topic){
+ const d=learningContent[topic],m=document.getElementById('learningHubModal'),b=document.getElementById('learningHubBody');if(!d||!m||!b)return;
+ document.getElementById('learningHubIcon').textContent=d.icon;document.getElementById('learningHubTitle').textContent=d.title;document.getElementById('learningHubIntro').textContent=d.intro;
+ b.innerHTML=d.lessons.map((x,i)=>`<article class="lesson-card"><h3><span class="lesson-number">${i+1}</span>${x[0]}</h3><p>${x[1]}</p></article>`).join('')+`<div class="lesson-tip"><strong>💡 Practical tip:</strong> ${d.tip}<br><button class="btn btn-small" style="margin-top:12px" onclick="markLearningComplete('${topic}')">✓ Mark Complete</button><div id="learningStatus"></div></div>`;
+ m.style.display='block';document.body.style.overflow='hidden'
 }
+function markLearningComplete(topic){const x=JSON.parse(localStorage.getItem('teenupCompletedSkills')||'{}');x[topic]=true;localStorage.setItem('teenupCompletedSkills',JSON.stringify(x));const s=document.getElementById('learningStatus');if(s)s.innerHTML='<strong>✅ Completed! Progress saved on this device.</strong>'}
+function closeLearningHub(){const m=document.getElementById('learningHubModal');if(m)m.style.display='none';document.body.style.overflow=''}
 
-// Smooth scroll to section
-function scrollToSection(sectionId) {
-    const element = document.getElementById(sectionId);
-    if (element) {
-        element.scrollIntoView({ behavior: 'smooth' });
-    }
-}
+function scrollToSection(id){const e=document.getElementById(id);if(e)e.scrollIntoView({behavior:'smooth',block:'start'})}
 
-// Quiz functionality
-function startQuiz(quizType) {
-    const quizzes = {
-        general: {
-            title: 'General Knowledge Quiz',
-            questions: [
-                {
-                    question: 'What is the capital of France?',
-                    options: ['London', 'Paris', 'Berlin', 'Madrid'],
-                    correct: 1
-                },
-                {
-                    question: 'Who wrote Romeo and Juliet?',
-                    options: [
-                        'Charles Dickens',
-                        'William Shakespeare',
-                        'Jane Austen',
-                        'Mark Twain'
-                    ],
-                    correct: 1
-                },
-                {
-                    question: 'What is the largest planet in our solar system?',
-                    options: ['Saturn', 'Neptune', 'Jupiter', 'Earth'],
-                    correct: 2
-                }
-            ]
-        },
+const quizzes={
+ general:{title:'General Knowledge Quiz',questions:[['What is the capital of France?',['London','Paris','Berlin','Madrid'],1],['Who wrote Romeo and Juliet?',['Charles Dickens','William Shakespeare','Jane Austen','Mark Twain'],1],['What is the largest planet?',['Saturn','Neptune','Jupiter','Earth'],2]]},
+ coding:{title:'Coding Challenge',questions:[['What does HTML stand for?',['Hyper Text Markup Language','High Tech Modern Language','Home Tool Markup Language','Hyperlinks and Text Markup Language'],0],['Which technology styles a webpage?',['CSS','HTML','SQL','Python'],0],['Which language makes webpages interactive?',['JavaScript','CSS','HTML only','CSV'],0]]},
+ leadership:{title:'Leadership Assessment',questions:[['What is useful when making a difficult decision?',['Avoid it','Research options and consequences','Choose randomly','Always let someone else decide'],1],['Good teamwork requires:',['Clear communication','Keeping information secret','Ignoring deadlines','One person doing everything'],0]]},
+ money:{title:'Financial Literacy Quiz',questions:[['What is a budget?',['A plan for income and spending','A shopping list only','A bank account','A loan'],0],['Why is saving useful?',['It can help prepare for future needs','It guarantees profit','It removes all risk','It means never spending'],0],['Profit is generally:',['Revenue minus costs','Costs plus costs','Revenue only','Money borrowed'],0]]}}
+let quizState=null;
+function startQuiz(type){const q=quizzes[type];if(!q)return;quizState={q,current:0,score:0};let m=document.getElementById('quizModal');if(!m){m=document.createElement('div');m.id='quizModal';m.className='modal';document.body.appendChild(m)}m.style.display='block';document.body.style.overflow='hidden';renderQuiz()}
+function renderQuiz(){const m=document.getElementById('quizModal'),s=quizState;if(!m||!s)return;if(s.current>=s.q.questions.length){const n=s.q.questions.length,p=Math.round(s.score/n*100);m.innerHTML=`<div class="modal-content"><button class="modal-close-button" onclick="closeQuiz()">&times;</button><h2>🎉 ${s.q.title} Complete</h2><div class="lesson-card"><h3>Your Score: ${s.score}/${n}</h3><p>You scored <strong>${p}%</strong>.</p><p>Keep practicing and try again.</p><button class="btn btn-primary" onclick="closeQuiz()">Continue</button></div></div>`;return}const z=s.q.questions[s.current];m.innerHTML=`<div class="modal-content"><button class="modal-close-button" onclick="closeQuiz()">&times;</button><span class="learning-hub-label">${s.q.title}</span><h2>Question ${s.current+1} of ${s.q.questions.length}</h2><div class="lesson-card"><h3>${z[0]}</h3><div class="quiz-option-list">${z[1].map((o,i)=>`<button class="quiz-option" onclick="answerQuiz(${i})">${o}</button>`).join('')}</div></div></div>`}
+function answerQuiz(i){if(!quizState)return;if(i===quizState.q.questions[quizState.current][2])quizState.score++;quizState.current++;renderQuiz()}
+function closeQuiz(){const m=document.getElementById('quizModal');if(m)m.style.display='none';document.body.style.overflow='';quizState=null}
 
-        coding: {
-            title: 'Coding Challenge',
-            questions: [
-                {
-                    question: 'What does HTML stand for?',
-                    options: [
-                        'Hyper Text Markup Language',
-                        'High Tech Modern Language',
-                        'Home Tool Markup Language',
-                        'Hyperlinks and Text Markup Language'
-                    ],
-                    correct: 0
-                },
-                {
-                    question: 'Which of these is NOT a programming language?',
-                    options: [
-                        'Python',
-                        'JavaScript',
-                        'CSS',
-                        'HTML (it is markup language)'
-                    ],
-                    correct: 3
-                }
-            ]
-        },
+function registerEvent(t){const e={web:'Web Development Workshop',leadership:'Youth Leadership Conference',bootcamp:'Entrepreneurship Bootcamp',arts:'Creative Arts Festival'};alert(`Thanks for your interest in ${e[t]||'TEENUP Event'}!\n\nRegistration can be connected to a real form later.`)}
+function openPrivacyModal(){const m=document.getElementById('privacyModal');if(m){m.style.display='block';document.body.style.overflow='hidden'}}
+function closePrivacyModal(){const m=document.getElementById('privacyModal');if(m){m.style.display='none';document.body.style.overflow=''}}
 
-        leadership: {
-            title: 'Leadership Assessment',
-            questions: [
-                {
-                    question: 'When faced with a difficult decision, do you:',
-                    options: [
-                        'Ask for advice from everyone',
-                        'Make a decision quickly',
-                        'Research and analyze options',
-                        'Avoid making the decision'
-                    ],
-                    correct: 2
-                }
-            ]
-        },
-
-        money: {
-            title: 'Financial Literacy Quiz',
-            questions: [
-                {
-                    question: 'What is compound interest?',
-                    options: [
-                        'Interest on interest earned',
-                        'Double your money',
-                        'No interest at all',
-                        'High interest rates'
-                    ],
-                    correct: 0
-                },
-                {
-                    question: 'What should you include in a budget?',
-                    options: [
-                        'Income and expenses',
-                        'Only expenses',
-                        'Only income',
-                        'Random amounts'
-                    ],
-                    correct: 0
-                }
-            ]
-        }
-    };
-
-    const quiz = quizzes[quizType];
-
-    if (!quiz) {
-        alert('Quiz not found!');
-        return;
-    }
-
-    let currentQuestion = 0;
-    let score = 0;
-
-    function showQuestion() {
-        if (currentQuestion < quiz.questions.length) {
-            const question = quiz.questions[currentQuestion];
-
-            const options = question.options
-                .map(
-                    (option, index) =>
-                        `<button onclick="selectAnswer(${index})" style="display: block; width: 100%; margin: 10px 0; padding: 10px; text-align: left; background: #f0f0f0; border: 1px solid #ccc; border-radius: 5px; cursor: pointer;">
-                            ${option}
-                        </button>`
-                )
-                .join('');
-
-            alert(
-                `Question ${currentQuestion + 1}: ${question.question}\n\nSelect an answer from the buttons below.`
-            );
-
-            // Note: alert() is used here for simplicity.
-            // In production, you'd use a proper modal.
-        } else {
-            showResults();
-        }
-    }
-
-    function selectAnswer(index) {
-        const question = quiz.questions[currentQuestion];
-
-        if (index === question.correct) {
-            score++;
-        }
-
-        currentQuestion++;
-        showQuestion();
-    }
-
-    function showResults() {
-        const percentage = Math.round(
-            (score / quiz.questions.length) * 100
-        );
-
-        alert(
-            `Quiz Complete!\n\nYour Score: ${score}/${quiz.questions.length}\nPercentage: ${percentage}%\n\nGreat job! Keep learning!`
-        );
-    }
-
-    // Make selectAnswer accessible to the inline buttons
-    window.selectAnswer = selectAnswer;
-
-    showQuestion();
-}
-
-// Event registration
-function registerEvent(eventType) {
-    const events = {
-        web: 'Web Development Workshop',
-        leadership: 'Youth Leadership Conference',
-        bootcamp: 'Entrepreneurship Bootcamp',
-        arts: 'Creative Arts Festival'
-    };
-
-    const eventName = events[eventType];
-
-    alert(
-        `✅ Thank you for registering for ${eventName}!\n\nWe'll send you a confirmation email with details soon.\n\nCheck your inbox and spam folder.`
-    );
-}
-
-// Privacy modal functionality
-function openPrivacyModal() {
-    const modal = document.getElementById('privacyModal');
-
-    if (modal) {
-        modal.style.display = 'block';
-    }
-}
-
-function closePrivacyModal() {
-    const modal = document.getElementById('privacyModal');
-
-    if (modal) {
-        modal.style.display = 'none';
-    }
-}
-
-// Click privacy link in footer
-document.addEventListener('DOMContentLoaded', () => {
-    const privacyLink = document.getElementById('privacy');
-
-    if (privacyLink) {
-        privacyLink.addEventListener('click', (e) => {
-            e.preventDefault();
-            openPrivacyModal();
-        });
-    }
+document.addEventListener('DOMContentLoaded',()=>{
+ const h=document.querySelector('.hamburger'),n=document.querySelector('.nav-menu');if(h&&n)h.addEventListener('click',()=>n.style.display=n.style.display==='flex'?'none':'flex');
+ const p=document.getElementById('privacy');if(p)p.addEventListener('click',e=>{e.preventDefault();openPrivacyModal()});
+ const input=document.querySelector('.email-input'),sub=Array.from(document.querySelectorAll('.btn-small')).find(b=>b.textContent.includes('Subscribe'));if(sub&&input)sub.addEventListener('click',()=>{const v=input.value.trim();if(v.includes('@')){alert('Thanks for subscribing!');input.value=''}else alert('Please enter a valid email address.')});
 });
+window.addEventListener('click',e=>['learningHubModal','privacyModal','quizModal'].forEach(id=>{const m=document.getElementById(id);if(e.target===m){m.style.display='none';document.body.style.overflow=''}}));
 
-// Close modal when clicking outside of it
-window.addEventListener('click', (event) => {
-    const modal = document.getElementById('privacyModal');
-
-    if (event.target == modal) {
-        modal.style.display = 'none';
-    }
-});
-
-// Newsletter subscription
-document.addEventListener('DOMContentLoaded', () => {
-    const emailInput = document.querySelector('.email-input');
-
-    const subscribeBtn = Array.from(
-        document.querySelectorAll('.btn-small')
-    ).find(btn => btn.textContent.includes('Subscribe'));
-
-    if (subscribeBtn) {
-        subscribeBtn.addEventListener('click', () => {
-            const email = emailInput.value.trim();
-
-            if (email && email.includes('@')) {
-                alert(
-                    `✅ Thanks for subscribing, ${email}!\n\nWe'll send you weekly tips and opportunities.`
-                );
-
-                emailInput.value = '';
-            } else {
-                alert('Please enter a valid email address.');
-            }
-        });
-    }
-});
-
-// Scroll animations
-const observerOptions = {
-    threshold: 0.1,
-    rootMargin: '0px 0px -50px 0px'
-};
-
-const observer = new IntersectionObserver((entries) => {
-    entries.forEach(entry => {
-        if (entry.isIntersecting) {
-            entry.target.style.opacity = '1';
-            entry.target.style.transform = 'translateY(0)';
-        }
-    });
-}, observerOptions);
-
-document.addEventListener('DOMContentLoaded', () => {
-    document
-        .querySelectorAll('.card, .skill-card, .event-card')
-        .forEach(el => {
-            el.style.opacity = '0';
-            el.style.transform = 'translateY(20px)';
-            el.style.transition =
-                'opacity 0.5s ease, transform 0.5s ease';
-
-            observer.observe(el);
-        });
-});
+const observerOptions={threshold:.1,rootMargin:'0px 0px -50px 0px'};
+if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}}),observerOptions);document.addEventListener('DOMContentLoaded',()=>document.querySelectorAll('.card,.skill-card,.event-card').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease,transform .5s ease';observer.observe(el)}))}
