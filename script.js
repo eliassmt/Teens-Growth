@@ -41,3 +41,82 @@ window.addEventListener('click',e=>['learningHubModal','privacyModal','quizModal
 
 const observerOptions={threshold:.1,rootMargin:'0px 0px -50px 0px'};
 if('IntersectionObserver' in window){const observer=new IntersectionObserver(entries=>entries.forEach(e=>{if(e.isIntersecting){e.target.style.opacity='1';e.target.style.transform='translateY(0)'}}),observerOptions);document.addEventListener('DOMContentLoaded',()=>document.querySelectorAll('.card,.skill-card,.event-card').forEach(el=>{el.style.opacity='0';el.style.transform='translateY(20px)';el.style.transition='opacity .5s ease,transform .5s ease';observer.observe(el)}))}
+
+
+// ============ TEENUP AI TUTOR ============
+let aiHistory = [];
+
+function openAITutor() {
+    const modal = document.getElementById('aiTutorModal');
+    if (!modal) return;
+    modal.style.display = 'block';
+    document.body.style.overflow = 'hidden';
+    const input = document.getElementById('aiInput');
+    if (input) setTimeout(() => input.focus(), 100);
+}
+
+function closeAITutor() {
+    const modal = document.getElementById('aiTutorModal');
+    if (modal) modal.style.display = 'none';
+    document.body.style.overflow = '';
+}
+
+function addAIMessage(text, type='bot') {
+    const box = document.getElementById('aiMessages');
+    if (!box) return;
+    const div = document.createElement('div');
+    div.className = `ai-message ai-message-${type}`;
+    div.textContent = text;
+    box.appendChild(div);
+    box.scrollTop = box.scrollHeight;
+    return div;
+}
+
+function useAISuggestion(text) {
+    const input = document.getElementById('aiInput');
+    if (input) {
+        input.value = text;
+        input.focus();
+    }
+}
+
+async function askTEENUPAI(message) {
+    const response = await fetch('/api/ai-tutor', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ message, history: aiHistory.slice(-8) })
+    });
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.error || 'The AI Tutor could not respond.');
+    return data.reply;
+}
+
+document.addEventListener('DOMContentLoaded', () => {
+    const form = document.getElementById('aiChatForm');
+    if (!form) return;
+    form.addEventListener('submit', async (event) => {
+        event.preventDefault();
+        const input = document.getElementById('aiInput');
+        const message = input.value.trim();
+        if (!message) return;
+
+        addAIMessage(message, 'user');
+        input.value = '';
+        input.disabled = true;
+        const typing = addAIMessage('Thinking…', 'bot');
+
+        try {
+            const reply = await askTEENUPAI(message);
+            typing.remove();
+            addAIMessage(reply, 'bot');
+            aiHistory.push({ role: 'user', content: message });
+            aiHistory.push({ role: 'assistant', content: reply });
+        } catch (error) {
+            typing.remove();
+            addAIMessage('I couldn’t connect right now. Please try again in a moment.', 'error');
+        } finally {
+            input.disabled = false;
+            input.focus();
+        }
+    });
+});

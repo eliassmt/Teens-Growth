@@ -125,37 +125,37 @@
                     <div class="skill-icon">💻</div>
                     <h3>Coding</h3>
                     <p>Python, JavaScript, Web Development</p>
-                    <button class="btn btn-small" onclick="alert('Coding resources coming soon!')">Explore</button>
+                    <button class="btn btn-small" onclick="openLearningHub('coding')">Explore</button>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">🌾</div>
                     <h3>Agriculture</h3>
                     <p>Sustainable farming & urban gardening</p>
-                    <button class="btn btn-small" onclick="alert('Agriculture resources coming soon!')">Explore</button>
+                    <button class="btn btn-small" onclick="openLearningHub('agriculture')">Explore</button>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">💼</div>
                     <h3>Entrepreneurship</h3>
                     <p>Start your own business</p>
-                    <button class="btn btn-small" onclick="alert('Entrepreneurship resources coming soon!')">Explore</button>
+                    <button class="btn btn-small" onclick="openLearningHub('entrepreneurship')">Explore</button>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">🎨</div>
                     <h3>Creativity</h3>
                     <p>Design, music, art & digital media</p>
-                    <button class="btn btn-small" onclick="alert('Creativity resources coming soon!')">Explore</button>
+                    <button class="btn btn-small" onclick="openLearningHub('creativity')">Explore</button>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">🗣️</div>
                     <h3>Communication</h3>
                     <p>Public speaking & leadership</p>
-                    <button class="btn btn-small" onclick="alert('Communication resources coming soon!')">Explore</button>
+                    <button class="btn btn-small" onclick="openLearningHub('communication')">Explore</button>
                 </div>
                 <div class="skill-card">
                     <div class="skill-icon">📊</div>
                     <h3>Data & Analytics</h3>
                     <p>Understand data-driven decision making</p>
-                    <button class="btn btn-small" onclick="alert('Analytics resources coming soon!')">Explore</button>
+                    <button class="btn btn-small" onclick="openLearningHub('analytics')">Explore</button>
                 </div>
             </div>
         </div>
@@ -399,7 +399,22 @@
         </div>
     </footer>
 
-    <!-- Privacy Modal -->
+    
+<!-- Learning Hub -->
+<div id="learningHubModal" class="modal learning-hub-modal">
+  <div class="modal-content learning-hub-content">
+    <button class="modal-close-button" onclick="closeLearningHub()" aria-label="Close">&times;</button>
+    <div class="learning-hub-hero">
+      <div id="learningHubIcon" class="learning-hub-icon">📚</div>
+      <div><span class="learning-hub-label">TEENUP LEARNING HUB</span>
+      <h2 id="learningHubTitle">Learn a New Skill</h2>
+      <p id="learningHubIntro">Build useful skills one lesson at a time.</p></div>
+    </div>
+    <div id="learningHubBody" class="learning-hub-body"></div>
+  </div>
+</div>
+
+<!-- Privacy Modal -->
     <div id="privacyModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closePrivacyModal()">&times;</span>
